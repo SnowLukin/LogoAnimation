@@ -28,9 +28,8 @@ struct ContentView: View {
                 }
                 Spacer()
                 ZStack {
-                    if showText {
-                        message
-                    }
+                    message
+                        .opacity(showText ? 1 : 0)
                     Snowflake()
                         .frame(width: UIScreen.main.bounds.width / 2, height: UIScreen.main.bounds.width / 2)
                         .overlay(
@@ -56,10 +55,13 @@ extension ContentView {
     
     private var message: some View {
         VStack {
-            Text("Got Hypnosis?")
+            Text("Got Hypnotized?")
+                .fontWeight(.semibold)
             Text("Now. Gimme ur money!")
+                .fontWeight(.semibold)
         }
         .foregroundColor(.white)
+        .font(.title)
     }
     
     private var pulseCircles: some View {
@@ -84,6 +86,16 @@ extension ContentView {
             isRotated.toggle()
         }
         animation = Animation.easeOut(duration: 6).repeatCount(1, autoreverses: true)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 7) {
+            withAnimation {
+                showText.toggle()
+            }
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 12) {
+            withAnimation {
+                showText.toggle()
+            }
+        }
         DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
             withAnimation(animation) {
                 isRotated.toggle()
