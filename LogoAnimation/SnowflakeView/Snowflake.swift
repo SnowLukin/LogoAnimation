@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct Snowflake: View {
+    
     var body: some View {
         GeometryReader { geometry in
             let width = geometry.size.width
@@ -26,6 +27,7 @@ struct Snowflake: View {
                         x: iteration > 3 ? closeLine : (1...2).contains(iteration) ? farLine : middleLine,
                         y: iteration == 0 ? closeLine : iteration == 3 ? farLine : iteration == 1 || iteration == 5 ? middleLine / 2 : middleLine + middleLine / 2
                     )
+                    
             }
             SnowflakeSpikes()
             SnowflakeMiddleCircle()
