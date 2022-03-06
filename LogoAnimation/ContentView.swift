@@ -13,6 +13,7 @@ struct ContentView: View {
     @State private var pulseFirst = false
     @State private var pulseSecond = false
     @State private var showText = false
+    @State private var isButtonDisabled = false
     
     var body: some View {
         ZStack {
@@ -21,22 +22,12 @@ struct ContentView: View {
             VStack {
                 HStack {
                     Spacer()
-                    Button("Animate") {
-                        scaleView()
-                    }
-                    .disabled(isRotated)
+                    button
                 }
                 Spacer()
                 ZStack {
                     message
-                        .opacity(showText ? 1 : 0)
-                    Snowflake()
-                        .frame(width: UIScreen.main.bounds.width / 2, height: UIScreen.main.bounds.width / 2)
-                        .overlay(
-                            pulseCircles
-                        )
-                        .scaleEffect(isRotated ? 58 : 1)
-                        .rotationEffect(.degrees(isRotated ? 360 * 10 : 0))
+                    snowflake
                 }
                 Spacer()
             }
@@ -53,6 +44,26 @@ struct ContentView_Previews: PreviewProvider {
 
 extension ContentView {
     
+    private var snowflake: some View {
+        Snowflake()
+            .frame(width: UIScreen.main.bounds.width / 2, height: UIScreen.main.bounds.width / 2)
+            .overlay(
+                pulseCircles
+            )
+            .scaleEffect(isRotated ? 58 : 1)
+            .rotationEffect(.degrees(isRotated ? 360 * 10 : 0))
+    }
+    
+    private var button: some View {
+        Button("Animate") {
+            isButtonDisabled.toggle()
+            scaleView(duration: 10)
+            setText()
+            setButtonState()
+        }
+        .disabled(isButtonDisabled)
+    }
+    
     private var message: some View {
         VStack {
             Text("Got Hypnotized?")
@@ -62,6 +73,7 @@ extension ContentView {
         }
         .foregroundColor(.white)
         .font(.title)
+        .opacity(showText ? 1 : 0)
     }
     
     private var pulseCircles: some View {
@@ -80,22 +92,35 @@ extension ContentView {
             })
     }
     
-    private func scaleView() {
-        var animation = Animation.easeIn(duration: 10).repeatCount(1, autoreverses: true)
-        withAnimation(animation) {
-            isRotated.toggle()
+    private func setButtonState() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 16) {
+            isButtonDisabled.toggle()
         }
-        animation = Animation.easeOut(duration: 6).repeatCount(1, autoreverses: true)
+    }
+    
+    private func setText() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 7) {
             withAnimation {
                 showText.toggle()
             }
         }
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 12) {
             withAnimation {
                 showText.toggle()
             }
         }
+    }
+    
+    private func scaleView(duration: Double) {
+        var animation = Animation.easeIn(duration: duration).repeatCount(1, autoreverses: true)
+        
+        withAnimation(animation) {
+            isRotated.toggle()
+        }
+        
+        animation = Animation.easeOut(duration: 6).repeatCount(1, autoreverses: true)
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
             withAnimation(animation) {
                 isRotated.toggle()
