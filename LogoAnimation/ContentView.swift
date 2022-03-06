@@ -9,9 +9,10 @@ import SwiftUI
 
 struct ContentView: View {
     
-    @State var isRotated = false
+    @State private var isRotated = false
     @State private var pulseFirst = false
     @State private var pulseSecond = false
+    @State private var showText = false
     
     var body: some View {
         ZStack {
@@ -26,14 +27,18 @@ struct ContentView: View {
                     .disabled(isRotated)
                 }
                 Spacer()
-                Snowflake()
-                    .frame(width: UIScreen.main.bounds.width / 2, height: UIScreen.main.bounds.width / 2)
-                    .overlay(
-                        pulseCircles
-                    )
-                    .scaleEffect(isRotated ? 58 : 1)
-//                    .blur(radius: isRotated ? 7 : 0)
-                    .rotationEffect(.degrees(isRotated ? 360 : 0))
+                ZStack {
+                    if showText {
+                        message
+                    }
+                    Snowflake()
+                        .frame(width: UIScreen.main.bounds.width / 2, height: UIScreen.main.bounds.width / 2)
+                        .overlay(
+                            pulseCircles
+                        )
+                        .scaleEffect(isRotated ? 58 : 1)
+                        .rotationEffect(.degrees(isRotated ? 360 * 10 : 0))
+                }
                 Spacer()
             }
             .padding()
@@ -48,6 +53,14 @@ struct ContentView_Previews: PreviewProvider {
 }
 
 extension ContentView {
+    
+    private var message: some View {
+        VStack {
+            Text("Got Hypnosis?")
+            Text("Now. Gimme ur money!")
+        }
+        .foregroundColor(.white)
+    }
     
     private var pulseCircles: some View {
         ZStack {
@@ -66,11 +79,12 @@ extension ContentView {
     }
     
     private func scaleView() {
-        let animation = Animation.easeInOut(duration: 4).repeatCount(1, autoreverses: true)
+        var animation = Animation.easeIn(duration: 10).repeatCount(1, autoreverses: true)
         withAnimation(animation) {
             isRotated.toggle()
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
+        animation = Animation.easeOut(duration: 6).repeatCount(1, autoreverses: true)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
             withAnimation(animation) {
                 isRotated.toggle()
             }
